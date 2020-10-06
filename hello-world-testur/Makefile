@@ -5,11 +5,18 @@ endif
 
 include $(SPEC)
 
-all: package
+JS_SOURCES:=index.js $(shell find src -name "*.js") $(shell find lib -name "*.js")
 
-package: $(OUTPUT_ROOT)/time.packaged
+PACKAGE_NAME:=$(shell cat package.json | json name)
+PACKAGE_VERSION:=$(shell cat package.json | json version)
+PACKAGE_TGZ_NAME:=$(PACKAGE_NAME)-$(PACKAGE_VERSION).tgz
+PACKAGE_TGZ:=$(OUTPUT_ROOT)/$(PACKAGE_TGZ_NAME)
 
-install: $(OUTPUT_ROOT)/time.installed
+all:  $(OUTPUT_ROOT)/time.compiled
+
+package: $(PACKAGE_TGZ)
+
+install: $(xNPM_LOCKFILE)
 
 lint:
 	@echo Linting...
@@ -17,15 +24,20 @@ lint:
 audit:
 	@echo Auditing...
 
-$(OUTPUT_ROOT)/time.packaged: $(OUTPUT_ROOT)/time.compiled
+$(PACKAGE_TGZ): $(OUTPUT_ROOT)/time.compiled
 	@echo Packaging...
-	@touch $@
+	@(PACKAGE="$$($(REAL_NPM) pack $(REAL_NPM_FLAGS))" && \
+      if [ "$${PACKAGE}" = "$(PACKAGE_TGZ_NAME)" ];\
+      then mv $(PACKAGE_TGZ_NAME) $(OUTPUT_ROOT) ; \
+      else echo Internal error expected $(PACKAGE_TGZ_NAME) but got $${PACKAGE} ; \
+      fi)
+	@(FOO="$@"; PREF="$$(pwd)"; BAR=$${FOO#$${PREF}}; echo Created .$${BAR} )
 
-$(OUTPUT_ROOT)/time.compiled: $(OUTPUT_ROOT)/time.installed
+$(OUTPUT_ROOT)/time.compiled: $(xNPM_LOCKFILE) $(JS_SOURCES)
 	@echo Compiling...
 	@touch $@
 
-$(OUTPUT_ROOT)/time.installed: package.json
+$(xNPM_LOCKFILE): package.json
 	@echo Installing dependencies...
 	@$(xNPM) install $(xNPM_FLAGS)
 	@touch $@
@@ -34,8 +46,8 @@ test:
 	@$(xNPM) test
 
 publish:
-	npm login
-	npm publish
+	$(REAL_NPM) login
+	$(REAL_NPM) publish $(PACKAGE_TGZ)
 
 clean:
 	rm -rf build autom4te.cache

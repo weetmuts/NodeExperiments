@@ -1,0 +1,10 @@
+dependencies:
+  hello-world-testur: 1.0.1
+lockfileVersion: 5.1
+packages:
+  /hello-world-testur/1.0.1:
+    dev: false
+    resolution:
+      integrity: sha512-D/7xBWGeahwUWeLMnXJ+O7XV3q+ztZl2EDlHNcyZlJwhQV4JmsuIUBa6nf4tg5T8XvH/Vlt7E7FnhaVgnNSTTA==
+specifiers:
+  hello-world-testur: ^1.0.1

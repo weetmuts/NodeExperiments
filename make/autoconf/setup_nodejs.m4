@@ -40,6 +40,9 @@ AC_SUBST(REAL_NPM_FLAGS)
 REAL_NPM_VERSION="$($REAL_NPM -v)"
 AC_SUBST(REAL_NPM_VERSION)
 
+REAL_NPM_LOCKFILE="package-lock.json"
+AC_SUBST(REAL_NPM_LOCKFILE)
+
 ######################################################
 #
 # npx, usually part of nodejs install above.
@@ -80,6 +83,9 @@ AC_SUBST(REAL_PNPM_FLAGS)
 
 REAL_PNPM_VERSION="$($REAL_PNPM -v)"
 AC_SUBST(REAL_PNPM_VERSION)
+
+REAL_PNPM_LOCKFILE="pnpm-lock.yaml"
+AC_SUBST(REAL_PNPM_LOCKFILE)
 
 ######################################################
 #
